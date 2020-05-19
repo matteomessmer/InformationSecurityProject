@@ -28,12 +28,13 @@ try:
             target = 1
             break
 
-    #show possible hacks
+    
+    #show possible hacks for the target
     if target==1:
-        
 
 
-        #make sure there is a slash at the of the url 
+
+        #make sure there is a slash at the end of the url 
         if url[-1] != '/':
             url = url + '/'
 
@@ -47,6 +48,8 @@ try:
 
         authors = soupParser.findAll("h3")
         print("Database name: " + authors[0].a.text)
+    elif target==0:
+        print("I cannot define the target")
 
 except:
     print("Error! It could be the url")
