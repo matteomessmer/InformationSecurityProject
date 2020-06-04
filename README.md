@@ -38,17 +38,13 @@ To the given string will then be added the end of the URL to which the request h
 
  *http://app-uri/quiz-page/wp-admin/admin-ajax.php*
 
-## CMSsite
-
-https://github.com/VictorAlagwu/CMSsite
-
-Install:
-
-Do the following change the code in the **db.php** 
+## Victor CMS
+Unzip VictorCMS.zip into server folder
+Change the code in the "includes/db.php" with your data
 
 - - $DB_host = ""; 
   - $DB_user = ""; 
   - $DB_pass = ""; 
   - $DB_name = "";
 
-- Import the database file     named "php_cms.sql"
+- Import the database file named "php_cms.sql"
