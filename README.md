@@ -11,7 +11,7 @@ We will use exploitDB and CVEdetails databases to find vulnerabilities.
 
 # Configurations
 
-### CodeIgniter XSS
+## CodeIgniter XSS
 
 Install CodeIgniter (*v2.1.0*) from the given zip file. In the zip file there are already the demo files for the exploit. 
 
@@ -38,3 +38,17 @@ To the given string will then be added the end of the URL to which the request h
 
  *http://app-uri/quiz-page/wp-admin/admin-ajax.php*
 
+## CMSsite
+
+https://github.com/VictorAlagwu/CMSsite
+
+Install:
+
+Do the following change the code in the **db.php** 
+
+- - $DB_host = ""; 
+  - $DB_user = ""; 
+  - $DB_pass = ""; 
+  - $DB_name = "";
+
+- Import the database file     named "php_cms.sql"
