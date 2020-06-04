@@ -30,6 +30,8 @@ Install the provided version of the plugin in WordPress.
 
 Create a WordPress page containing a quiz.
 
+The underlying database should be mySQL.
+
 Launch the exploit with the following URL:
 
 *http://app-uri/quiz-page*
