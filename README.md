@@ -36,10 +36,6 @@ Launch the exploit with the following URL:
 
 *http://app-uri/quiz-page*
 
-To the given string will then be added the end of the URL to which the request have to be made. At the end, the URL will look like this:
-
- *http://app-uri/quiz-page/wp-admin/admin-ajax.php*
-
 ## Victor CMS
 Unzip VictorCMS.zip into server folder
 Change the code in the "includes/db.php" with your data
