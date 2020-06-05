@@ -38,11 +38,23 @@ Launch the exploit with the following URL:
 
 ## Victor CMS
 Unzip VictorCMS.zip into server folder
+
 Change the code in the "includes/db.php" with your data
 
-- - $DB_host = ""; 
-  - $DB_user = ""; 
-  - $DB_pass = ""; 
-  - $DB_name = "";
+- $DB_host = ""; 
+- $DB_user = ""; 
+- $DB_pass = ""; 
+- $DB_name = "";
 
-- Import the database file named "php_cms.sql"
+Import the database file named "php_cms.sql"
+
+Launch the exploit with the URL of the main page
+
+## Simple Membership
+Install and activate the plugin in wordpress
+
+Go into the Simple Membership Dashboard
+
+Create at least one role and one member with that role
+
+Launch the exploit with the URL of the main page
