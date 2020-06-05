@@ -214,7 +214,7 @@ while exit != "y":
             browser.open("http://javariati.tk/matteo/InfoSec/CSRF.php?url=" + url)
 
             browser.select_form(nr = 0)
-            print(browser)
+            
             browser.submit()
             #form is automatically submitted
 
