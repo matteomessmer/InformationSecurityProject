@@ -57,6 +57,6 @@ Install and activate the plugin in wordpress
 
 Go into the Simple Membership Dashboard
 
-Create at least one role and one member with that role
+Create at least one role and one member with that role (the role id should be 2, because the exploit makes an example using that id)
 
 Launch the exploit with the URL of the main page

