@@ -28,6 +28,8 @@ In order to launch the exploit, type in the program the following URL:
 
 Install the provided version of the plugin in WordPress.
 
+Create a quiz with a question.
+
 Create a WordPress page containing a quiz.
 
 The underlying database should be mySQL.
