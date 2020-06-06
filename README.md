@@ -1,5 +1,5 @@
 # InformationSecurityProject
-Repo for the project of the Information Security course at UniBZ.
+Repo for the project of the Information Security course at UniBZ. This repo contains the final report, all the plugins and CMS we exploited (apart from Wordpress) and the main.py which contains all the exploits we implemented. 
 
 # Group Project
 - Giacomo Melacini	15724
