@@ -43,12 +43,14 @@ while exit != "y":
         try:
             #if it hasn't this plugin, the mechanize throws an exception for 404
             browser.open(url + "membership-login/")
-            title = browser.title()
+            page = browser.response().read()
+            soupParser = BeautifulSoup(page, "html.parser")
+            title = soupParser.findAll("h1", {"class": "entry-title"})
         except:
             title = None
-
+        print(title)
         #Is it Simple WordPress Membership?
-        if title and "Member Login" in  title:
+        if len(title) > 0 and "Member Login" in  title[0]:
             print("This has the Simple Membership plugin")
             target = 4
         else:
