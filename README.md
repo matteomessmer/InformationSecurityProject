@@ -53,6 +53,8 @@ Import the database file named "php_cms.sql"
 Launch the exploit with the URL of the main page
 
 ## Simple Membership
+For this exploit we used Wordpress 4.9
+
 Install and activate the plugin in wordpress
 
 Go into the Simple Membership Dashboard
