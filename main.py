@@ -48,7 +48,7 @@ while exit != "y":
             title = soupParser.findAll("h1", {"class": "entry-title"})
         except:
             title = None
-        print(title)
+            
         #Is it Simple WordPress Membership?
         if len(title) > 0:
             print("This has the Simple Membership plugin")
@@ -220,7 +220,7 @@ while exit != "y":
             browser.submit()
             #form is automatically submitted
 
-            print("visit " + url + "wp-admin/admin.php?page=simple_wp_membership to see the modifications")
+            print("Done! Visit " + url + "wp-admin/admin.php?page=simple_wp_membership to see the modifications")
     print()
     print()
     exit = input("Do you want to exit (y/n)?")
