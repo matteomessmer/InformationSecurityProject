@@ -50,7 +50,7 @@ while exit != "y":
             title = None
         print(title)
         #Is it Simple WordPress Membership?
-        if len(title) > 0 and "Member Login" in  title[0]:
+        if len(title) > 0:
             print("This has the Simple Membership plugin")
             target = 4
         else:
